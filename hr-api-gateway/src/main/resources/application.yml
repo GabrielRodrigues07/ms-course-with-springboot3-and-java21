@@ -18,6 +18,10 @@ spring:
               uri: lb://hr-payroll
               predicates:
                 - Path=/payments/**
+            - id: hr-user
+              uri: lb://hr-user
+              predicates:
+                - Path=/users/**
   main:
     web-application-type: reactive
 
