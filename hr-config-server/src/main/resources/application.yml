@@ -9,3 +9,5 @@ spring:
       server:
         git:
           uri: https://github.com/GabrielRodrigues07/ms-course-configs.git
+          username: ${GITHUB_USERNAME}
+          password: ${GITHUB_PASSWORD}
