@@ -5,6 +5,7 @@ import br.com.hrworker.repository.WorkerRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,9 @@ public class WorkerController {
 
     private final Environment env;
 
+    @Value("${test.config}")
+    private String testConfig;
+
     private final Logger logger = LoggerFactory.getLogger(WorkerController.class);
 
     private final WorkerRepository workerRepository;
@@ -29,6 +33,12 @@ public class WorkerController {
     @GetMapping
     public ResponseEntity<List<WorkerEntity>> findAll() {
         return ResponseEntity.ok().body(workerRepository.findAll());
+    }
+
+    @GetMapping(value = "/configs")
+    public ResponseEntity<List<WorkerEntity>> getConfigs() {
+        logger.info("CONFIG: " + testConfig);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping(value = "/{id}")
