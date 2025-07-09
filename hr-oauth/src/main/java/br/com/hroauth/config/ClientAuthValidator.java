@@ -1,6 +1,8 @@
 package br.com.hroauth.config;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -8,10 +10,14 @@ import java.util.Base64;
 import java.util.Objects;
 
 @Component
+@RefreshScope
 public class ClientAuthValidator {
 
-    private final String clientName = "myappname123";
-    private final String clientSecret = "myappsecret123";
+    @Value("${oauth.client.name}")
+    private String clientName;
+
+    @Value("${oauth.client.secret}")
+    private String clientSecret;
 
     public boolean isValid(HttpServletRequest httpRequest) {
 

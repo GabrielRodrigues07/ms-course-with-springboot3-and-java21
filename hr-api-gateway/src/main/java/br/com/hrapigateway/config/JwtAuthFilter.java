@@ -3,6 +3,8 @@ package br.com.hrapigateway.config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,9 +21,11 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Component
+@RefreshScope
 public class JwtAuthFilter implements WebFilter {
 
-    private final String SECRET = "mysecretkey1234567890123456789054654131313454879837874SFDGF4546";
+    @Value("${jwt.secret}")
+    private String secret;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -34,7 +38,7 @@ public class JwtAuthFilter implements WebFilter {
             String jwt = authHeader.get().substring(7);
             try {
                 Claims claims = Jwts.parserBuilder()
-                        .setSigningKey(Keys.hmacShaKeyFor(SECRET.getBytes()))
+                        .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
                         .build()
                         .parseClaimsJws(jwt)
                         .getBody();
