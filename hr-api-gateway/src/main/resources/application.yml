@@ -26,10 +26,17 @@ spring:
               uri: lb://hr-oauth
               predicates:
                 - Path=/users/**
-              sensitive-headers: Cookie,Set-Cookie
+                - Path=/oauth/**
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RemoveResponseHeader=Set-Cookie
   main:
     web-application-type: reactive
-
+    allow-bean-definition-overriding: true
+  security:
+    user:
+      name: none
+      password: none
 
 server:
   port: 8765
@@ -41,3 +48,9 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     preferIpAddress: true
+
+#logging:
+#  level:
+#    org.springframework.security: DEBUG
+#    org.springframework.boot.autoconfigure.security: DEBUG,
+#    org.springframework.web.server.adapter.HttpWebHandlerAdapter: TRACE
