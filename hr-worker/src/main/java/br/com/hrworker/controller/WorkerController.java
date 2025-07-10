@@ -25,8 +25,8 @@ public class WorkerController {
 
     private final Environment env;
 
-    @Value("${test.config}")
-    private String testConfig;
+//    @Value("${test.config}")
+//    private String testConfig;
 
     private final Logger logger = LoggerFactory.getLogger(WorkerController.class);
 
@@ -39,7 +39,7 @@ public class WorkerController {
 
     @GetMapping(value = "/configs")
     public ResponseEntity<List<WorkerEntity>> getConfigs() {
-        logger.info("CONFIG: " + testConfig);
+//        logger.info("CONFIG: " + testConfig);
         return ResponseEntity.noContent().build();
     }
 
