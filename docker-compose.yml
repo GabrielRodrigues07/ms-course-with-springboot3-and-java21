@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  hr-user-db:
+    image: postgres:latest
+    container_name: hr-user-pg12
+    ports:
+      - "5436:5432"
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_USER}
+      - POSTGRES_DB=${POSTGRES_DB_USER}
+    networks:
+      - hr-net
+
+  hr-worker-db:
+    image: postgres:latest
+    container_name: hr-worker-pg12
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_WORKER}
+      - POSTGRES_DB=${POSTGRES_DB_WORKER}
+    networks:
+      - hr-net
+
+  hr-config-server:
+    build:
+      context: ./hr-config-server
+#    ports:
+#      - "8888:8888"
+    networks:
+      - hr-net
+    environment:
+      - GITHUB_USERNAME=${GITHUB_USER}
+      - GITHUB_PASSWORD=${GITHUB_PASS}
+
+  hr-eureka-server:
+    build:
+      context: ./hr-eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - hr-net
+
+  hr-api-gateway:
+    build:
+      context: ./hr-api-gateway
+    ports:
+      - "8765:8765"
+    depends_on:
+      - hr-eureka-server
+      - hr-config-server
+    networks:
+      - hr-net
+
+  hr-oauth:
+    build:
+      context: ./hr-oauth
+    environment:
+      - SERVER_PORT=0
+    depends_on:
+      - hr-eureka-server
+      - hr-config-server
+    networks:
+      - hr-net
+
+  hr-user:
+    build:
+      context: ./hr-user
+    environment:
+      - SERVER_PORT=0
+    depends_on:
+      - hr-user-db
+      - hr-eureka-server
+      - hr-config-server
+    networks:
+      - hr-net
+
+  hr-worker:
+    build:
+      context: ./hr-worker
+    depends_on:
+      - hr-worker-db
+      - hr-eureka-server
+      - hr-config-server
+    networks:
+      - hr-net
+
+  hr-payroll:
+    build:
+      context: ./hr-payroll
+    depends_on:
+      - hr-eureka-server
+    networks:
+      - hr-net
+
+networks:
+  hr-net:
+    driver: bridge
